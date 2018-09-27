@@ -76,18 +76,41 @@ public class Main {
 				return subSections;
 			}
 		}
+		//コンフィグをしまっておくホルダーを呼びます
 		AnnotatedConfigHolder holder = new AnnotatedConfigHolder();
+		
+		//ホルダーは一つ、パーサーを抱えています（名称未確定）
 		AnnotatedConfigParser parser = holder.getParser();
-		//TestRatProvider reader = new TestRatProvider();
+		
+		//INIファイル形式用の読み出し器です
 		CheapIniReader iReader = new CheapIniReader();
+		
+		//propertiesファイルの読み出し器です
 		CheapPropertiesReader pReader = new CheapPropertiesReader();
+
+		//このmain関数の中で適当に定義したテスト用の読み出し器もどきです
 		TestRatProvider tReader = new TestRatProvider();
+		
+		//パーサーに、抽象クラス「AbstPart」用のデシリアライザを登録します。
+		//今回は具象クラス「ConcretePart」のコンストラクタを用意しました
 		parser.registerDeserializer(AbstPart.class, (s)->{return new ConcretePart(s);});
+		
+		//LaboRatクラスに沿って、"ratCnfg.ini"からINIファイル形式用読み出し器を使ってコンフィグを崇徳
 		LaboRat iRat = holder.registerConfig("ini", LaboRat.class, "ratCnfg.ini", "", iReader);
+		
+		//LaboRatクラスに沿って、"example.properties"からproperties形式読み出しでコンフィグを取得します
 		LaboRat pRat = holder.registerConfig("prop", LaboRat.class, "example.properties", "", pReader);
+		
+		//"ratCnfg.ini"から、"head b"セクション内のコンフィグを読み出します
 		RatHead iniHead = holder.registerConfig("headOnly", RatHead.class, "ratCnfg.ini", "head b", iReader);
+		
+		//"example.properties"から、"headSecond"よりしたのドメインの値を読み出します
 		RatHead tstHead = holder.registerConfig("testProv", RatHead.class, "", "headSecond", tReader);
+		
+		//laboRatクラスで記述されるコンフィグを今一度全部読み直し、全部取得します
 		Map<String, LaboRat> laboMap = holder.getSpecifiedConfigs(LaboRat.class, true);
+		
+		//RatHeadクラスのコンフィグをリロード（末尾がtrueなので
 		holder.getSpecifiedConfigs(RatHead.class, true);
 	}
 
