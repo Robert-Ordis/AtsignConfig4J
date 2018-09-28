@@ -8,7 +8,6 @@ import java.util.Set;
 
 import info.ro.gadget.configurator.core.AnnotatedConfig;
 import info.ro.gadget.configurator.core.annotation.Constraint;
-import info.ro.gadget.configurator.core.definition.Restriction;
 import info.ro.gadget.configurator.core.instance.deserializer.AcDeserializer;
 
 @SuppressWarnings("rawtypes")

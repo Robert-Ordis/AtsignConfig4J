@@ -1,6 +1,5 @@
 package info.ro.gadget.configurator.core.instance.deserializer;
 
-import java.lang.reflect.Type;
 import java.net.InetAddress;
 import java.util.HashMap;
 import java.util.Map;
@@ -24,7 +23,7 @@ public class DeserializerStore {
 		 PRIMITIVES_TO_WRAPPERS.put(void.class, Void.class);
 	 }
 	
-	static private long presetLong(String s) {
+	 private static long presetLong(String s) {
 		final Pattern hexPattern = Pattern.compile("^(-?)0x([0-9a-fA-F]+)$");
 		int baseNum = 10;
 		s = s.trim();
@@ -157,7 +156,7 @@ public class DeserializerStore {
 		if(clazz.isPrimitive()) {
 			clazz = PRIMITIVES_TO_WRAPPERS.get(clazz);
 		}
-		AcDeserializer ret = this.map.getOrDefault(clazz, null);
+		AcDeserializer ret = this.map.get(clazz);
 		
 		if(ret == null) {
 			ret = new AcDefaultDeserializer(clazz);

@@ -5,7 +5,6 @@ import java.lang.reflect.Method;
 
 import info.ro.gadget.configurator.core.AnnotatedConfig;
 import info.ro.gadget.configurator.core.annotation.Constraint;
-import info.ro.gadget.configurator.core.definition.Restriction;
 
 public abstract class MethodSetter implements MemberSetter{
 	Method method;
