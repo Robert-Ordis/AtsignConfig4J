@@ -1,11 +1,8 @@
 package functionalTest;
 
 import java.io.IOException;
-import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.sql.Timestamp;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -14,13 +11,8 @@ import TestRatPackage.ConcretePart;
 import TestRatPackage.LaboRat;
 import TestRatPackage.RatHead;
 import info.ro.gadget.configurator.addition.holder.AnnotatedConfigHolder;
-import info.ro.gadget.configurator.core.AnnotatedConfig;
 import info.ro.gadget.configurator.core.AnnotatedConfigParser;
 import info.ro.gadget.configurator.core.exception.AcWrongParamException;
-import info.ro.gadget.configurator.core.instance.AcConfigSetterStore;
-import info.ro.gadget.configurator.core.instance.deserializer.AcDeserializer;
-import info.ro.gadget.configurator.core.instance.deserializer.DeserializerStore;
-import info.ro.gadget.configurator.core.instance.setter.MemberSetter;
 import info.ro.gadget.configurator.reader.ConfigLineListener;
 import info.ro.gadget.configurator.reader.ConfigReader;
 import info.ro.gadget.configurator.reader.preset.CheapIniReader;
@@ -61,7 +53,6 @@ public class Main {
 				}
 				Set<String> subSections = new HashSet<String>();
 				listener.onRead(0, "INTEGER", "123", "整数値");
-				//listener.onRead(2, "INTEGER_L", "12345", "倍長整数値");
 				listener.onRead(0, "LONG", "-255", "倍長整数値");
 				listener.onRead(0, "AUTODIAL2+", "0120565608", "マルハチベッド");
 				listener.onRead(0, "INTLIST", "1,2,3,4,5 ", "整数値リスト");
@@ -74,6 +65,9 @@ public class Main {
 				listener.onRead(100,  "FLOATING_D", "1.33333333333333", "floating point");
 				
 				return subSections;
+			}
+			public Timestamp getLastModified(String path) {
+				return null;
 			}
 		}
 		//コンフィグをしまっておくホルダーを呼びます
@@ -112,6 +106,9 @@ public class Main {
 		
 		//RatHeadクラスのコンフィグをリロード（末尾がtrueなので
 		holder.getSpecifiedConfigs(RatHead.class, true);
+		
+		System.out.println("reload ratHead");
+		holder.reloadConfig("headOnly",  RatHead.class);
 	}
 
 }

@@ -105,6 +105,9 @@ public class AnnotatedConfigHolder {
 		if(conf == null) {
 			return null;
 		}
+		if(!conf.isModified()) {
+			return conf;
+		}
 		T newConf = parser.getConfig(conf.getSourcePath(), conf.getReadSection(), clazz, conf.getReader());
 		this.putConfig(key, clazz, newConf);
 		return newConf;

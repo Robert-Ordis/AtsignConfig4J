@@ -2,8 +2,10 @@ package info.ro.gadget.configurator.reader.preset;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.sql.Timestamp;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.regex.Matcher;
@@ -104,6 +106,19 @@ public class CheapIniReader implements ConfigReader{
 			fr.close();
 		}
 		return ret;
+	}
+	
+	@Override
+	public Timestamp getLastModified(String path) throws IOException{
+		// TODO Auto-generated method stub
+		if(path == null) {
+			return null;
+		}
+		File f = new File(path);
+		if(!f.isFile()) {
+			throw new IOException(path + " is not read as file.");
+		}
+		return new Timestamp(f.lastModified());
 	}
 	
 }

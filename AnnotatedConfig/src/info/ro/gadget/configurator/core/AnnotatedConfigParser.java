@@ -85,6 +85,7 @@ public class AnnotatedConfigParser {
 						}
 						AcConfigSetterStore s = new AcConfigSetterStore(c, this.dstore);
 						stores.put(c, s);
+						//storeから受け取った「次にリフレクションを書くべきサブセットクラス」について用意する
 						nextClazzSet.addAll(s.getSubClasses());
 					}
 					subjectClazzSet = nextClazzSet;
@@ -102,6 +103,7 @@ public class AnnotatedConfigParser {
 		retConfig.setReadSection(section);
 		retConfig.setSourcePath(src);
 		retConfig.setReader(reader);
+		retConfig.setModified(reader.getLastModified(src));
 		
 		//「これから値をセットしていくインスタンス」のリストを作っておく。
 		readList.add(retConfig);
@@ -110,6 +112,7 @@ public class AnnotatedConfigParser {
 		AcWrongParamException wrongLog = new AcWrongParamException();
 		//作ったインスタンスリストに従い、ひたすら値を読み出していく。値は外のパーサーがやってくれる。
 		while(!readList.isEmpty()) {
+			//次に読み込むインスタンスのリスト。現在のインスタンスリストがサブセットを持っているなら生成される。
 			Set<AnnotatedConfig> nextSet = new HashSet<AnnotatedConfig>();
 			for(AnnotatedConfig conf : readList) {
 				//とりあえず外注に従って値を読み込んでいく。
@@ -118,6 +121,7 @@ public class AnnotatedConfigParser {
 				listener.splitter = reader.getSplitter();
 				listener.mustConfig = listener.store.getMustConfiguredMembers();
 				
+				//実際の値読み込み
 				Set<String> subParams = reader.readConfig(src, conf.getReadSection(), listener);
 				
 				wrongLog.merge(listener.totalExcept);

@@ -1,5 +1,8 @@
 package info.ro.gadget.configurator.core;
 
+import java.io.IOException;
+import java.sql.Timestamp;
+
 import info.ro.gadget.configurator.reader.ConfigReader;
 
 public abstract class AnnotatedConfig {
@@ -9,28 +12,43 @@ public abstract class AnnotatedConfig {
 	String			__section__ 	= null;	//読み込んだセクション（フルパス。未指定の場合はnull）
 	String			__src__			= null;	//読み込みに使った元ファイル（サブセットなど、文字列を直接読んだ場合はnull）
 	ConfigReader	__reader__		= null;	//このコンフィグを読み込むのに使ったリーダ
+	Timestamp		__modified__	= null;	//対象の更新日時
 	
 	/**
 	 * 値単体では実行できない複合的なチェックを行うためのメソッド。
 	 * @return
 	 */
 	public abstract boolean doFinalValidation();
-	public String getReadSection() {
+	public final String getReadSection() {
 		return this.__section__;
 	}
-	public void setReadSection(String arg) {
+	public final void setReadSection(String arg) {
 		this.__section__ = arg;
 	}
-	public String getSourcePath() {
+	public final String getSourcePath() {
 		return this.__src__;
 	}
-	public void setSourcePath(String arg) {
+	public final void setSourcePath(String arg) {
 		this.__src__ = arg;
 	}
-	public ConfigReader getReader() {
+	public final ConfigReader getReader() {
 		return this.__reader__;
 	}
-	public void setReader(ConfigReader arg) {
+	public final void setReader(ConfigReader arg) {
 		this.__reader__ = arg;
+	}
+	public final void setModified(Timestamp arg) {
+		this.__modified__ = arg;
+	}
+	public final boolean isModified() throws IOException {
+		if(this.__modified__ == null) {
+			return true;
+		}
+		Timestamp tmp = this.__reader__.getLastModified(this.__src__);
+		if(tmp == null) {
+			return true;
+		}
+		//最終更新日時が変わっていない場合にfalse。
+		return !tmp.equals(this.__modified__);
 	}
 }

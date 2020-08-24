@@ -1,6 +1,7 @@
 package info.ro.gadget.configurator.reader;
 
 import java.io.IOException;
+import java.sql.Timestamp;
 import java.util.Set;
 
 /**
@@ -46,4 +47,13 @@ public interface ConfigReader {
 	 * @throws Exception	大抵読み込み時に出てきた例外。
 	 */
 	public Set<String>	 	readConfig(String path, String section, ConfigLineListener listener) throws IOException;
+	
+	/**
+	 * 指定されたファイルの最終更新日時を取得する
+	 * @param path			対象の読み込み元ファイル
+	 * 
+	 * @return				ファイルの最終更新日時。nullの場合はライブラリに必ず再読み込みしてほしい場合や環境変数のような明確なファイルではない場合。
+	 * @throws IOException	ファイルが見つからん場合これを投げる
+	 */
+	public Timestamp		getLastModified(String path) throws IOException;
 }
