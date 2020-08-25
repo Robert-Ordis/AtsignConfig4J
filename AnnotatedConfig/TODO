@@ -3,20 +3,49 @@
 　→とりあえず、もうその辺優先してやっちゃえ
 　→セクションで区切ってきたiniファイルで、ピリオド区切り構造やってきたらどうするって話。
 
-[わかってるけど優先度低いこと]
-・サブセットの読み込み方の最適化
-　→今はサブセットを検出したらそのつどファイルを読み直している。
-　
-[分かってるけど今のところ予定のないこと]
-・Map<String, Object>系統の対応
+・セクションはコンフィグの構造に影響を与えない→1個のファイルにデフォルトを作りつつ（または作らずに）複数のコンフィグを記述するためのものがセクション、としよう。
+・「全セクションを読み込め」とか言われたら、Map<String, **Config>が返ってくる。
+・
+
 ・Map<String, AnnotatedConfig>の対応
 　→要するに、下みたいなイメージ（"Map<String, SubsetCnfg> subsetMap;"がメンバーになる。）
 rootCnfg.subsetMap.keyOfMap1.param1 = value
 rootCnfg.subsetMap.keyOfMap1.param2 = value
 rootCnfg.subsetMap.keyOfMap2.param1 = value
 rootCnfg.subsetMap.keyOfMap2.param2 = value
-　→アノテーションとしての指定方法がいまいちはっきりしていない。
-　→値の入れ方をどうしよう。
+={"rootCnfg": {"subsetMap": {"keyOfMap1": {"param1": value, "param2": value}, "keyOfMap2": {"param1": value, "param2": value}}}}
+　→値の入れ方をどうしよう。↓みたいな感じかな？んで、用途の問題で型は明確なものにしないといけない。
+@ConfigSubsetMap
+Map<String, **Config(extends AnnotatedConfig)> subsetMap;
+
+Parser parser = new Parser()
+	.setSrc(src)				//path of source config file
+	.useFirstSectionAsDefault(true)	//Use the first appeared section's value for the default of other section.
+	.setReader(Preset.WINDOWS_INI)	//set reader. Must be set.
+	.addParent(parent_set(str));	//read only from specified value's subset.
+
+Config c = parser.getConfig(clazz);
+Config c = parser.getConfig(clazz, section);
+
+Map<String, Config> map = parser.getAllConfig(clazz);
+
+//ConfigHolderはまたおいおい考えるとしましょう。
+
+
+
+parser.specifySection("section1").specifySection("section2")
+	.getConfig(src, Class<T> clazz, ConfigReader reader);
+	
+//AnnotatedConfigからReaderは外すかな？
+
+
+[わかってるけど優先度低いこと]
+・サブセットの読み込み方の最適化
+　→今はサブセットを検出したらそのつどファイルを読み直している。
+　
+[分かってるけど今のところ予定のないこと]
+・Map<String, Object>系統の対応
+　→それに頼らなくちゃいけない時点でもうちょっとコンフィグ考えましょう。
 
 [今後やってみたいこと]
 ・コンフィグのファイルへの書き出し
@@ -30,7 +59,10 @@ rootCnfg.subsetMap.keyOfMap2.param2 = value
 　　　　：ただし、フォーマット対応可変を夢見るので関数内で「出力パラメータ名, 値の記述, コメント」って形でコールバック叩くイメージ。
 　　　　：出力中にエラー吐いたらログと出力ファイルにそれっぽいこと書くぐらいはしていいと思う。
 　→ファイルのリーダーは外出ししたので、同じくライターも外出しすることになると思う。
-　　
+　→セクションの扱いを変えたため、「1ファイルに様々なセクションのブツが持ってこられる」という感じになる。
+　　そう考えると、configWriter（仮）は、様々なコンフィグファイルが一挙して押し寄せてくるイメージにでもなるか？
+　　まさかの、ConfigHolderに依頼を出して書き出す形か？
+
 [とりあえずやったこと]
 ・コンフィグの読み込み
 　→パラメータ名などの基本情報をクラス内に、アノテーションとして記述
@@ -42,6 +74,6 @@ rootCnfg.subsetMap.keyOfMap2.param2 = value
 　→セクションとして「読み込むパート」を明確に指定できるようにしてみた
 　　- ・・・んだけど、propertiesのピリオドとiniのセクションを今ごっちゃにしてるんでどうしようかなこれ。
 　　　　分けるべきなのかなこれ…。でもひとまず想定してたのはpropertiesとiniぐらいだったからな…。
-
+　　　　-> 分けることにしました。引数増えるのは…、もうこの際しょうがないしょうがない。
 
 

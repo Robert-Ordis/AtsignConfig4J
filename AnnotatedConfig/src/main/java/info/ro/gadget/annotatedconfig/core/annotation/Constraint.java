@@ -17,12 +17,12 @@ import info.ro.gadget.annotatedconfig.core.definition.Restriction;
 @Target({ElementType.METHOD, ElementType.FIELD})
 public @interface Constraint {
 	Restriction value() default Restriction.NORMAL;	//実際の規制。Restrictionの定数からもらう。
-	long maxInt() default Long.MAX_VALUE;
-	long minInt() default Long.MIN_VALUE;
-	double maxDouble() default Double.MAX_VALUE;
-	double minDouble() default Double.MIN_VALUE;
-	int maxStrLen() default Integer.MAX_VALUE;
-	int minStrLen() default 0;
-	int maxCollect() default Integer.MAX_VALUE;
-	int minCollect() default 0;
+	long maxInt() default Long.MAX_VALUE;				//整数最大値
+	long minInt() default Long.MIN_VALUE;				//整数最小値
+	double maxDouble() default Double.MAX_VALUE;		//浮動小数最大値
+	double minDouble() default Double.MIN_VALUE;		//浮動小数最小値
+	int maxStrLen() default Integer.MAX_VALUE;		//文字列最大長（unicode単位）
+	int minStrLen() default 0;							//文字列再象徴（unicode単位）
+	int maxCollect() default Integer.MAX_VALUE;		//配列の最大格納数
+	int minCollect() default 0;						//配列の最小格納数
 }
