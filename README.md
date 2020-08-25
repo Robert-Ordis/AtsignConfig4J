@@ -1,2 +1,2 @@
-# AnnotatedConifg4J
+# AnnotatedConfig4J
 アノテーション/リフレクションの習作として書いたコンフィグライブラリもどきです。
