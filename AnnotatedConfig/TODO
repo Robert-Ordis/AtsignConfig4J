@@ -22,16 +22,19 @@ Parser parser = new Parser()
 	.setSrc(src)				//path of source config file
 	.useFirstSectionAsDefault(true)	//Use the first appeared section's value for the default of other section.
 	.setReader(Preset.WINDOWS_INI)	//set reader. Must be set.
-	.addParent(parent_set(str));	//read only from specified value's subset.
+	.pushParent(parent_set(str));	//read only from specified value's subset. Array is also allowed.
 
-Config c = parser.getConfig(clazz);
-Config c = parser.getConfig(clazz, section);
+Config c = parser.getConfig(clazz);				//get the first appeared section config
+Config c = parser.getConfig(clazz, section);	//get the specified section config
 
-Map<String, Config> map = parser.getAllConfig(clazz);
+Map<String, Config> map = parser.getAllConfig(clazz);	//get all appeared config. sectonName->config
 
 //ConfigHolderはまたおいおい考えるとしましょう。
+//各Parserを生成するためのファクトリーをユーザーで用意してもらって、
+//Holder.register(key, clazz, parser [, section])って形にするかな。
+//confの中にparserが入ってて、っていう形？
 
-
+AnnotatedConfigHolder
 
 parser.specifySection("section1").specifySection("section2")
 	.getConfig(src, Class<T> clazz, ConfigReader reader);
