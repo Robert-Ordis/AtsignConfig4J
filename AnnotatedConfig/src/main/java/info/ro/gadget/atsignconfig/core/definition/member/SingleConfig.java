@@ -40,7 +40,7 @@ public class SingleConfig implements AcField{
 		return (Class<?>)ret;
 	}
 	
-	private FieldSetter makeCollectionSetter(Class<? extends AtsignConfig> clazz, String name, Field field) 
+	private FieldSetter makeCollectionSetter(Class<? extends AtsignConfig> clazz, final String name, final Field field) 
 		throws AcWrongClassException {
 
 		String key = clazz.getName() + "[" + name + "]";

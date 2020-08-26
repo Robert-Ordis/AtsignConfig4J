@@ -41,8 +41,9 @@ public class AtsignConfigParser {
 			Constructor<T> con = clazz.getDeclaredConstructor();
 			con.setAccessible(true);
 			return con.newInstance();
-		} catch (InstantiationException | IllegalAccessException | IllegalArgumentException
-				| InvocationTargetException | NoSuchMethodException | SecurityException e) {
+		} catch (Exception e) {
+		//} catch (InstantiationException | IllegalAccessException | IllegalArgumentException
+		//		| InvocationTargetException | NoSuchMethodException | SecurityException e) {
 			// TODO Auto-generated catch block
 			AcWrongClassException eAc = new AcWrongClassException("", e.getMessage());
 			eAc.initCause(e);

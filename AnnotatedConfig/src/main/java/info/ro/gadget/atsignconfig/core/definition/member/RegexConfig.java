@@ -22,7 +22,7 @@ public class RegexConfig implements AcMethod{
 	
 	
 	@Override
-	public MethodSetter makeMemberSetter(Class<? extends AtsignConfig> clazz, String name, Method method)
+	public MethodSetter makeMemberSetter(Class<? extends AtsignConfig> clazz, final String name, Method method)
 			throws AcWrongClassException {
 		// TODO Auto-generated method stub
 		String key = clazz.getName() + "[" + name + "]";

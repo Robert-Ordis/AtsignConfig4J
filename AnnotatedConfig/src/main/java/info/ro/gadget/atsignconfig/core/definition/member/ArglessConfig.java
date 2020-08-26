@@ -16,7 +16,7 @@ import info.ro.gadget.atsignconfig.core.instance.setter.FieldSetter;
 public class ArglessConfig implements AcField {
 	
 	@Override
-	public FieldSetter makeMemberSetter(Class<? extends AtsignConfig> clazz, String name, Field field)
+	public FieldSetter makeMemberSetter(Class<? extends AtsignConfig> clazz, final String name, final Field field)
 			throws AcWrongClassException {
 		// TODO Auto-gene// TODO Auto-generated method stub
 		String key = clazz.getName() + "[" + name + "]";
