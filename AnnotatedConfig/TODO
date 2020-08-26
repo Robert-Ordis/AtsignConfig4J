@@ -5,7 +5,8 @@
 
 ・セクションはコンフィグの構造に影響を与えない→1個のファイルにデフォルトを作りつつ（または作らずに）複数のコンフィグを記述するためのものがセクション、としよう。
 ・「全セクションを読み込め」とか言われたら、Map<String, **Config>が返ってくる。
-・
+・いい加減、Parserの部分は作り直しでしょうね。モジュールチックに作れたとは自負しているので、
+読み込んだ行をどう扱うかっていう部分だけ考えればよさそうですが。
 
 
 ・Map<String, AnnotatedConfig>の対応
@@ -19,6 +20,10 @@ rootCnfg.subsetMap.keyOfMap2.param2 = value
 @ConfigSubsetMap
 Map<String, **Config(extends AnnotatedConfig)> subsetMap;
 
+//xmlもyamlもサポートすんならこれ必須。
+@ConfigSubsetList
+List<**Config(extends AtsignConfig)> subsetList;
+
 Parser parser = new Parser()
 	.setSrc(src)				//path of source config file
 	.useFirstSectionAsDefault(true)	//Use the first appeared section's value for the default of other section.
@@ -29,6 +34,30 @@ Config c = parser.getConfig(clazz);				//get the first appeared section config
 Config c = parser.getConfig(clazz, section);	//get the specified section config
 
 Map<String, Config> map = parser.getAllConfig(clazz);	//get all appeared config. sectonName->config
+
+・readConfigの戻り値は「次のセクション」？。んで、listenerにインターフェース追加: onSubset。
+もしくはセクションについてもonSectionってやっちまうか。
+そうすると、readConfigからsectionの項目が消えることになるる。
+いろいろとつながりとか持たせたいので、
+ConfigLineListener
+　→"has root set, default named as space or null"
+　→onValue(lineNum, name, value, comment)	//invoke mapped setter. (Must invoke in each logical line)
+　→pushSubset(lineNum, name, comment)		//make subset in specified name. (Invoke if subset is detected)
+　　→in one lined config, explode and push one by one.
+　　→for Array, name will be ignored and append as new element. "xxx.1.value1" on properties must be defined as Map<String, XXX>
+　→popSubset(lineNum)						//pop to upper set (Invoke if subset has been end. e.g. xml, json, yaml)
+　→clearSubset()								//switch to first specified root set (Invoke if subset line has been end. e.g. properties)
+　→switchSection(lineNum, name, comment)
+
+//split with own rule.
+String[] ConfigReader::splitValue(String value) {
+	//do something else. if not support, 
+}
+
+cloneメソッドは手間かかリンゴ。
+なので、リフレクションのあれやこれやを使って何とか頑張ってみましょうか？
+→サブセットのやつとかなかなか手間だよなあ。Clonerクラスでも作ってやってみるかなあ。
+→それこそ、前の実相でやったみたいな「実態のあるサブセットを確保しておいて次に繰り返す」をこっちでできる。
 
 //ConfigHolderはまたおいおい考えるとしましょう。
 //Parserを生成するためのファクトリーをユーザーで用意してもらって、
