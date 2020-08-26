@@ -30,12 +30,12 @@ Config c = parser.getConfig(clazz, section);	//get the specified section config
 Map<String, Config> map = parser.getAllConfig(clazz);	//get all appeared config. sectonName->config
 
 //ConfigHolderはまたおいおい考えるとしましょう。
-//各Parserを生成するためのファクトリーをユーザーで用意してもらって、
-//Holder.register(key, clazz, parser [, section])って形にするかな。
+//Parserを生成するためのファクトリーをユーザーで用意してもらって、
+//AtConfigHolder.register(key, clazz, parser [, section])って形にするかな。
 //confの中にparserが入ってて、っていう形？
 
 AnnotatedConfigHolder
-
+AtSignConfig
 parser.specifySection("section1").specifySection("section2")
 	.getConfig(src, Class<T> clazz, ConfigReader reader);
 	
