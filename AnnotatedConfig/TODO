@@ -7,6 +7,7 @@
 ・「全セクションを読み込め」とか言われたら、Map<String, **Config>が返ってくる。
 ・
 
+
 ・Map<String, AnnotatedConfig>の対応
 　→要するに、下みたいなイメージ（"Map<String, SubsetCnfg> subsetMap;"がメンバーになる。）
 rootCnfg.subsetMap.keyOfMap1.param1 = value
