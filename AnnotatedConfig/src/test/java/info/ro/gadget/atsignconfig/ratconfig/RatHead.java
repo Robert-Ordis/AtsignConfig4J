@@ -2,10 +2,12 @@ package info.ro.gadget.atsignconfig.ratconfig;
 
 import info.ro.gadget.atsignconfig.core.AtsignConfig;
 import info.ro.gadget.atsignconfig.core.annotation.Constraint;
+import info.ro.gadget.atsignconfig.core.annotation.Hidden;
 import info.ro.gadget.atsignconfig.core.annotation.TreatFieldsAsParamsImplicitly;
 import info.ro.gadget.atsignconfig.core.definition.Restriction;
 
 @TreatFieldsAsParamsImplicitly
+@Hidden
 public class RatHead extends AtsignConfig{
 	
 	public RatHead() {

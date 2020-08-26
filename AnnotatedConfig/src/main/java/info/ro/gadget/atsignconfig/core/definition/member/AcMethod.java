@@ -11,5 +11,5 @@ public interface AcMethod {
 	public static final AcMethod SETTER = new SetterConfig();
 	public static final AcMethod REGEX = new RegexConfig();
 	
-	public MethodSetter makeMemberSetter(Class<? extends AtsignConfig> clazz, String name, Method method) throws AcWrongClassException;
+	public MethodSetter makeMemberSetter(Class<? extends AtsignConfig> clazz, String name, Method method, boolean hidden) throws AcWrongClassException;
 }

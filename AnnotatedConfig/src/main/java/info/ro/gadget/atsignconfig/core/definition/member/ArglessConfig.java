@@ -3,6 +3,9 @@ package info.ro.gadget.atsignconfig.core.definition.member;
 import java.lang.reflect.Field;
 import java.lang.reflect.Member;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import info.ro.gadget.atsignconfig.core.AtsignConfig;
 import info.ro.gadget.atsignconfig.core.exception.AcWrongClassException;
 import info.ro.gadget.atsignconfig.core.instance.setter.FieldSetter;
@@ -15,8 +18,10 @@ import info.ro.gadget.atsignconfig.core.instance.setter.FieldSetter;
  */
 public class ArglessConfig implements AcField {
 	
+	Logger log = LoggerFactory.getLogger(new Object(){}.getClass().getEnclosingClass());
+	
 	@Override
-	public FieldSetter makeMemberSetter(Class<? extends AtsignConfig> clazz, final String name, final Field field)
+	public FieldSetter makeMemberSetter(Class<? extends AtsignConfig> clazz, final String name, final Field field, final boolean hidden)
 			throws AcWrongClassException {
 		// TODO Auto-gene// TODO Auto-generated method stub
 		String key = clazz.getName() + "[" + name + "]";
@@ -35,9 +40,12 @@ public class ArglessConfig implements AcField {
 			public void putValueInside(AtsignConfig conf, Member member, String name, Object value, String comment)
 					throws Exception {
 				// TODO Auto-generated method stub
-				System.out.println(name+":argless input");
+				log.info("{} :argless input", name);
 				field.set(conf, true);
 			}
+			
+			@Override
+			public boolean isHidden () {return hidden;}
 			
 		};
 		return ret;

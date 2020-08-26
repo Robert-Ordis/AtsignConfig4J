@@ -10,6 +10,9 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import info.ro.gadget.atsignconfig.core.exception.AcWrongClassException;
 import info.ro.gadget.atsignconfig.core.exception.AcWrongParamException;
 import info.ro.gadget.atsignconfig.core.instance.AcConfigSetterStore;
@@ -23,6 +26,8 @@ public class AtsignConfigParser {
 	
 	Map<Class<? extends AtsignConfig>, AcConfigSetterStore> stores;
 	DeserializerStore dstore;
+	Logger log = LoggerFactory.getLogger(new Object(){}.getClass().getEnclosingClass());
+	
 	
 	public AtsignConfigParser() {
 		stores = new HashMap<Class<? extends AtsignConfig>, AcConfigSetterStore>();
@@ -163,7 +168,7 @@ public class AtsignConfigParser {
 			readList = nextSet;
 		}
 		wrongLog.throwIfExist();
-		System.out.println(wrongLog.getMessage());
+		log.warn(wrongLog.getMessage());
 		return retConfig;
 	}
 	
@@ -188,7 +193,8 @@ public class AtsignConfigParser {
 				}
 				int i = 0;
 				for(String val : vals) {
-					//System.out.println(name+": input ["+val+"]");
+					String logVal = setter.isHidden() ? "###":val;
+					log.info("{}: input [{}]", name, logVal);
 					
 					//01:PARAM[0]->errorという書式を意識。
 					String errKey = lineNum + ":" + name + "[" + i + "]";

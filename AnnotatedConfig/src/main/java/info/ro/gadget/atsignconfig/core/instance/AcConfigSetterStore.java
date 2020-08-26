@@ -12,11 +12,15 @@ import java.util.Map;
 import java.util.Set;
 import java.util.regex.Pattern;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import info.ro.gadget.atsignconfig.core.AtsignConfig;
 import info.ro.gadget.atsignconfig.core.annotation.ConfigFunc;
 import info.ro.gadget.atsignconfig.core.annotation.ConfigParam;
 import info.ro.gadget.atsignconfig.core.annotation.ConfigSubset;
 import info.ro.gadget.atsignconfig.core.annotation.Constraint;
+import info.ro.gadget.atsignconfig.core.annotation.Hidden;
 import info.ro.gadget.atsignconfig.core.annotation.NotParam;
 import info.ro.gadget.atsignconfig.core.annotation.TreatFieldsAsParamsImplicitly;
 import info.ro.gadget.atsignconfig.core.definition.FieldMethod;
@@ -28,6 +32,8 @@ import info.ro.gadget.atsignconfig.core.instance.setter.MemberSetter;
 import info.ro.gadget.atsignconfig.core.instance.setter.MethodSetter;
 
 public class AcConfigSetterStore {
+	
+	Logger log = LoggerFactory.getLogger(new Object(){}.getClass().getEnclosingClass());
 	
 	private static final ConfigParam defaultParamAnnotation = new ConfigParam() {
 		String[] v = {""};
@@ -54,7 +60,7 @@ public class AcConfigSetterStore {
 	
 	@SuppressWarnings("unchecked")
 	public AcConfigSetterStore(Class<? extends AtsignConfig> moldClazz, DeserializerStore dstores) throws AcWrongClassException{
-		System.out.println("moldClass is "+moldClazz);
+		log.info("moldClass is "+moldClazz);
 		
 		this.simpleSetterMap = new HashMap<String, MemberSetter>();
 		this.regexSetterMap = new HashMap<String, MemberSetter>();
@@ -62,13 +68,19 @@ public class AcConfigSetterStore {
 		this.subsetClasses = new HashSet<Class<? extends AtsignConfig>>();
 		this.mustConfigured = new HashSet<MemberSetter>();
 		boolean implicitParam = false;	//暗黙的にフィールドをパラメータとして扱うかどうか
+		boolean hideGlobally = false;
 		
 		TreatFieldsAsParamsImplicitly implAnnotation = moldClazz.getAnnotation(TreatFieldsAsParamsImplicitly.class);
 		implicitParam = implAnnotation != null;
+		
+		//値をログから隠すことについて。（まずはクラス単位）
+		Hidden hideAnnotation = moldClazz.getAnnotation(Hidden.class);
+		hideGlobally = hideAnnotation != null;
+		
 		AcWrongClassException errorMerger = null;
 		for(Field field : moldClazz.getDeclaredFields()) {
 			//まずは基幹となるConfigParamアノテーションを取得する。
-			System.out.println(field.getType() + " " + field.getName());
+			log.info(field.getType() + " " + field.getName());
 			if(field.getAnnotation(NotParam.class) != null) {
 				//@NotParam-> this is NOT a parameter.
 				continue;
@@ -77,13 +89,15 @@ public class AcConfigSetterStore {
 				ConfigParam paramAnnotation = field.getAnnotation(ConfigParam.class);
 				ConfigSubset subsetAnnotation = field.getAnnotation(ConfigSubset.class);
 				FieldSetter setter;
+				boolean hide = hideGlobally | (field.getAnnotation(Hidden.class) != null); 
+				
 				if(paramAnnotation != null && subsetAnnotation != null ) {
 					//両方はつけられないので注意。
 					throw new AcWrongClassException(field.getName(), "Cannot attach both of these annotations:ConfigParam & ConfigSubset.");
 				}
 				if(subsetAnnotation != null) {
 					//フィールドが仮にSubsetConfigだった場合。必ずAnnotatedConfigでなければならない。
-					System.out.println(subsetAnnotation);
+					log.info("{}", subsetAnnotation);
 					String pName = subsetAnnotation.value().trim();
 					if(pName.equals("")) {
 						pName = field.getName();
@@ -104,7 +118,7 @@ public class AcConfigSetterStore {
 				}
 				if(paramAnnotation != null) {
 					//フツーのコンフィグとして置いておく
-					System.out.println(paramAnnotation);
+					log.debug("{}", paramAnnotation);
 					List<String> params = Arrays.asList(paramAnnotation.value());
 					if(params.size() == 0) {
 						params.add("");
@@ -118,7 +132,7 @@ public class AcConfigSetterStore {
 						this.throwIfDuplicated(pName, key);
 						
 						FieldMethod fm = paramAnnotation.method();
-						setter = fm.getMethod().makeMemberSetter(moldClazz, pName, field);
+						setter = fm.getMethod().makeMemberSetter(moldClazz, pName, field, hide);
 						Constraint c = field.getAnnotation(Constraint.class);
 						setter.setConstraint(c);
 						try {
@@ -149,14 +163,16 @@ public class AcConfigSetterStore {
 		}
 		
 		for(Method method:moldClazz.getDeclaredMethods()) {
-			System.out.println(method.getName());
+			log.debug(method.getName());
+			boolean hide = hideGlobally | (method.getAnnotation(Hidden.class) != null); 
+			
 			try {
 				//ConfigFuncアノテーションで入れられるパラメータ
 				ConfigFunc funcAnnotation = method.getAnnotation(ConfigFunc.class);
 				if(funcAnnotation == null) {
 					continue;
 				}
-				System.out.println(funcAnnotation);
+				log.debug("{}", funcAnnotation);
 				//ここではパラメータ名は必ず設定する
 				for(String pName : funcAnnotation.value()) {
 					pName = pName.trim();
@@ -168,7 +184,7 @@ public class AcConfigSetterStore {
 					
 					//関数に関するあれこれなセッターを生成する。
 					AcMethod am = funcAnnotation.method().getMethod();
-					MethodSetter setter = am.makeMemberSetter(moldClazz, pName, method);
+					MethodSetter setter = am.makeMemberSetter(moldClazz, pName, method, hide);
 					Constraint c = method.getAnnotation(Constraint.class);
 					setter.setConstraint(c);
 					//「必ず設定しなければならない」制約に対してつけられる。

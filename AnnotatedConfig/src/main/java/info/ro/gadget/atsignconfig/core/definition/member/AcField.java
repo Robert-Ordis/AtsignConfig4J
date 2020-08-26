@@ -11,5 +11,5 @@ public interface AcField {
 	public static final AcField ARGLESS = new ArglessConfig();
 	//public static final AcField COLLECT = new CollectConfig();
 	
-	public FieldSetter makeMemberSetter(Class<? extends AtsignConfig> clazz, String name, Field field) throws AcWrongClassException;
+	public FieldSetter makeMemberSetter(Class<? extends AtsignConfig> clazz, String name, Field field, boolean hidden) throws AcWrongClassException;
 }

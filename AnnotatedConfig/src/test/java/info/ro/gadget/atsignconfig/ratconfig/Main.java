@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory;
 import info.ro.gadget.atsignconfig.addition.holder.AtsignConfigHolder;
 import info.ro.gadget.atsignconfig.core.AtsignConfigParser;
 import info.ro.gadget.atsignconfig.core.exception.AcWrongParamException;
+import info.ro.gadget.atsignconfig.core.instance.deserializer.AcDeserializer;
 import info.ro.gadget.atsignconfig.reader.ConfigLineListener;
 import info.ro.gadget.atsignconfig.reader.ConfigReader;
 import info.ro.gadget.atsignconfig.reader.preset.CheapIniReader;
@@ -89,7 +90,15 @@ public class Main {
 		
 		//パーサーに、抽象クラス「AbstPart」用のデシリアライザを登録します。
 		//今回は具象クラス「ConcretePart」のコンストラクタを用意しました
-		parser.registerDeserializer(AbstPart.class, (s)->{return new ConcretePart(s);});
+		//parser.registerDeserializer(AbstPart.class, (s)->{return new ConcretePart(s);});
+		parser.registerDeserializer(AbstPart.class, new AcDeserializer () {
+
+			@Override
+			public Object deserialize(String s) throws Exception {
+				return new ConcretePart(s);
+			}
+			
+		});
 		
 		//LaboRatクラスに沿って、"ratCnfg.ini"からINIファイル形式用読み出し器を使ってコンフィグを崇徳
 		LaboRat iRat = holder.registerConfig("ini", LaboRat.class, "ratCnfg.ini", "", iReader);

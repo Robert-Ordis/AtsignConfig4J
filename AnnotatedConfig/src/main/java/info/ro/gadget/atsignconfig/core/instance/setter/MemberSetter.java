@@ -12,4 +12,5 @@ public interface MemberSetter {
 	public String getName();
 	public boolean isSplitNeeded();
 	public Member getMember();
+	public boolean isHidden();
 }

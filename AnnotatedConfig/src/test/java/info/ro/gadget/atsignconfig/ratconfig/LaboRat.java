@@ -14,6 +14,7 @@ import info.ro.gadget.atsignconfig.core.annotation.ConfigFunc;
 import info.ro.gadget.atsignconfig.core.annotation.ConfigParam;
 import info.ro.gadget.atsignconfig.core.annotation.ConfigSubset;
 import info.ro.gadget.atsignconfig.core.annotation.Constraint;
+import info.ro.gadget.atsignconfig.core.annotation.Hidden;
 import info.ro.gadget.atsignconfig.core.annotation.NotParam;
 import info.ro.gadget.atsignconfig.core.annotation.TreatFieldsAsParamsImplicitly;
 import info.ro.gadget.atsignconfig.core.definition.FieldMethod;
@@ -103,6 +104,7 @@ public class LaboRat extends AtsignConfig{
 		regexCount++;
 	}
 	
+	@Hidden
 	@ConfigFunc(value = "AUTODIAL(\\d+)(\\+?)", method = FuncMethod.REGEX)
 	@Constraint(Restriction.MUST)
 	void setAutoDialer(Matcher m, String value, String comment) throws Exception{

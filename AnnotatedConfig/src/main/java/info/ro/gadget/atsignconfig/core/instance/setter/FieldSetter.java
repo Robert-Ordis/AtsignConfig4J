@@ -17,6 +17,7 @@ public abstract class FieldSetter implements MemberSetter{
 	Constraint constraint;
 	Class clazz;
 	String name;
+	boolean hidden = false;
 	
 	private static Set<Class> intClazz = new HashSet<Class>();
 	private static Set<Class> doubleClazz = new HashSet<Class>();
@@ -89,14 +90,14 @@ public abstract class FieldSetter implements MemberSetter{
 			//Long val = Long.valueOf(src.trim());
 			long val = ((Number)value).longValue();
 			if(constraint.maxInt() < val || constraint.minInt() > val) {
-				throw new Exception("value["+val+"] exceeds value limit.");
+				throw new Exception("value["+src+"] exceeds value limit.");
 			}
 		}
 		else if(doubleClazz.contains(this.clazz)) {
 			//Double val = Double.valueOf(src.trim());
 			double val = ((Number)value).doubleValue();
 			if(constraint.maxDouble() < val || constraint.minDouble() > val) {
-				throw new Exception("value["+val+"] exceeds value limit.");
+				throw new Exception("value["+src+"] exceeds value limit.");
 			}
 		}
 		else {

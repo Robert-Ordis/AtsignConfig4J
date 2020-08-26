@@ -40,7 +40,7 @@ public class SingleConfig implements AcField{
 		return (Class<?>)ret;
 	}
 	
-	private FieldSetter makeCollectionSetter(Class<? extends AtsignConfig> clazz, final String name, final Field field) 
+	private FieldSetter makeCollectionSetter(Class<? extends AtsignConfig> clazz, final String name, final Field field, final boolean hidden) 
 		throws AcWrongClassException {
 
 		String key = clazz.getName() + "[" + name + "]";
@@ -84,12 +84,16 @@ public class SingleConfig implements AcField{
 			public boolean isSplitNeeded() {
 				return true;
 			}
+			
+			@Override
+			public boolean isHidden() {return hidden;}
+			
 		};
 		return ret;
 	}
 	
 	@Override
-	public FieldSetter makeMemberSetter(Class<? extends AtsignConfig> clazz, String name, Field field)
+	public FieldSetter makeMemberSetter(Class<? extends AtsignConfig> clazz, String name, Field field, final boolean hidden)
 			throws AcWrongClassException {
 		// TODO Auto-generated method stub
 		
@@ -98,7 +102,7 @@ public class SingleConfig implements AcField{
 		
 		if(List.class.isAssignableFrom(fieldClazz) || Set.class.isAssignableFrom(fieldClazz)) {
 			//List<E>か、Set<E>であるのならコレクションとしてセットする用意を整える
-			return this.makeCollectionSetter(clazz, name, field);
+			return this.makeCollectionSetter(clazz, name, field, hidden);
 		}
 		
 		//クラスの検査。プリミティブならラッパークラスに直したうえで実行。（プリミティブのラッパーはVoidを除いて文字列型から変換できる）
@@ -108,9 +112,13 @@ public class SingleConfig implements AcField{
 					throws Exception {
 				// TODO Auto-generated method stub
 				Field f = (Field)member;
-				System.out.println(name+": single input ["+value.toString()+"]");
+				//System.out.println(name+": single input ["+value.toString()+"]");
 				f.set(conf, value);
 			}
+			
+			@Override
+			public boolean isHidden() {return hidden;}
+			
 		};
 		return ret;
 	}

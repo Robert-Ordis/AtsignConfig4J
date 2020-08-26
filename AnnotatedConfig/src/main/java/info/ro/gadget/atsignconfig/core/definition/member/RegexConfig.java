@@ -22,7 +22,7 @@ public class RegexConfig implements AcMethod{
 	
 	
 	@Override
-	public MethodSetter makeMemberSetter(Class<? extends AtsignConfig> clazz, final String name, Method method)
+	public MethodSetter makeMemberSetter(Class<? extends AtsignConfig> clazz, final String name, Method method, final boolean hidden)
 			throws AcWrongClassException {
 		// TODO Auto-generated method stub
 		String key = clazz.getName() + "[" + name + "]";
@@ -78,6 +78,9 @@ public class RegexConfig implements AcMethod{
 						}
 					}
 				}
+				
+				@Override
+				public boolean isHidden() {return hidden;}
 				
 			};
 			return ret;

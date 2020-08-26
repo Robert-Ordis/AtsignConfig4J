@@ -11,6 +11,9 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import info.ro.gadget.atsignconfig.reader.ConfigLineListener;
 import info.ro.gadget.atsignconfig.reader.ConfigReader;
 
@@ -31,6 +34,8 @@ import info.ro.gadget.atsignconfig.reader.ConfigReader;
 public class CheapIniReader implements ConfigReader{
 
 	private static final Pattern sectionPattern = Pattern.compile("^\\s*\\[([^\\]]+)\\].*$");	//セクション判別用
+	
+	Logger log = LoggerFactory.getLogger(new Object(){}.getClass().getEnclosingClass());
 	
 	@Override
 	public String getDomainSeparator() {
@@ -75,7 +80,7 @@ public class CheapIniReader implements ConfigReader{
 					inSection = section.equals(nextSection);
 					//ここでは階層的読み込みはサポートしないため、空白セクション（＝ルート）でのみ次のセクションを示す。
 					if(section.equals("")) {
-						System.out.println("next section:["+nextSection+"]");
+						log.info("next section:[{}]", nextSection);
 						ret.add(nextSection.trim());
 					}
 					continue;
