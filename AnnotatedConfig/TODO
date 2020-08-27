@@ -20,6 +20,11 @@ rootCnfg.subsetMap.keyOfMap2.param2 = value
 @ConfigSubsetMap
 Map<String, **Config(extends AnnotatedConfig)> subsetMap;
 
+制限事項
+・Map<String, XXX>の値はデシリアライザを定義したオブジェクトでなければならない。ListはギリOK。
+・サブセットとして定義するものは必ずAtsignConfigを継承しなければならない
+　→リロードする機能はつけないけど、リロードの助けになるものは
+
 //xmlもyamlもサポートすんならこれ必須。
 @ConfigSubsetList
 List<**Config(extends AtsignConfig)> subsetList;
