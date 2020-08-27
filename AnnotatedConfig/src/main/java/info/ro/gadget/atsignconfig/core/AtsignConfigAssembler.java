@@ -1,5 +1,6 @@
 package info.ro.gadget.atsignconfig.core;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import org.slf4j.Logger;
@@ -7,6 +8,7 @@ import org.slf4j.LoggerFactory;
 
 import info.ro.gadget.atsignconfig.core.instance.AcConfigSetterStore;
 import info.ro.gadget.atsignconfig.core.instance.deserializer.DeserializerStore;
+import info.ro.gadget.atsignconfig.reader.AtsignConfigLineListener;
 
 /**
  * Config class Assembler.
@@ -22,11 +24,41 @@ public class AtsignConfigAssembler {
 	Logger log = LoggerFactory.getLogger(new Object(){}.getClass().getEnclosingClass());
 	
 	static {
-		
+		stores = new HashMap<Class<? extends AtsignConfig>, AcConfigSetterStore>();
 	}
 	
 	
-	private class ConfigLineListenerImpl {
+	private class ConfigLineListenerImpl implements AtsignConfigLineListener{
+
+		@Override
+		public void onValue(int lineNo, String name, String value, String comment) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void pushSubset(int lineNo, String name, String comment) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void popSubset(int lineNo) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void clearSubset() {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void switchSection(int lineNo, String name, String comment) {
+			// TODO Auto-generated method stub
+			
+		}
 		
 	}
 	
