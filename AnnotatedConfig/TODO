@@ -24,7 +24,7 @@ Map<String, **Config(extends AnnotatedConfig)> subsetMap;
 @ConfigSubsetList
 List<**Config(extends AtsignConfig)> subsetList;
 
-Parser parser = new Parser()
+Builder parser = new Parser()
 	.setSrc(src)				//path of source config file
 	.useFirstSectionAsDefault(true)	//Use the first appeared section's value for the default of other section.
 	.setReader(Preset.WINDOWS_INI)	//set reader. Must be set.
@@ -41,13 +41,7 @@ Map<String, Config> map = parser.getAllConfig(clazz);	//get all appeared config.
 いろいろとつながりとか持たせたいので、
 ConfigLineListener
 　→"has root set, default named as space or null"
-　→onValue(lineNum, name, value, comment)	//invoke mapped setter. (Must invoke in each logical line)
-　→pushSubset(lineNum, name, comment)		//make subset in specified name. (Invoke if subset is detected)
-　　→in one lined config, explode and push one by one.
-　　→for Array, name will be ignored and append as new element. "xxx.1.value1" on properties must be defined as Map<String, XXX>
-　→popSubset(lineNum)						//pop to upper set (Invoke if subset has been end. e.g. xml, json, yaml)
-　→clearSubset()								//switch to first specified root set (Invoke if subset line has been end. e.g. properties)
-　→switchSection(lineNum, name, comment)
+　→methods are already defined in .java file.
 
 //split with own rule.
 String[] ConfigReader::splitValue(String value) {
@@ -60,6 +54,10 @@ cloneメソッドは手間かかリンゴ。
 →それこそ、前の実相でやったみたいな「実態のあるサブセットを確保しておいて次に繰り返す」をこっちでできる。
 →NotParamとかなんとかは無視していい。
 →んなわけで、AtsignConfigの実装クラス限定にしましょう。もう。
+→コンフィグのリロードとか対応させたい。
+
+Map<String, Value>は、どうしようかな。
+
 
 //ConfigHolderはまたおいおい考えるとしましょう。
 //Parserを生成するためのファクトリーをユーザーで用意してもらって、

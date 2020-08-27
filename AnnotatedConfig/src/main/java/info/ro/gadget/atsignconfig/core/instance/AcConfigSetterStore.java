@@ -31,6 +31,8 @@ import info.ro.gadget.atsignconfig.core.instance.setter.FieldSetter;
 import info.ro.gadget.atsignconfig.core.instance.setter.MemberSetter;
 import info.ro.gadget.atsignconfig.core.instance.setter.MethodSetter;
 
+//Extracted setters for specified class.
+//TODO: Think how to support Map<String, Object>.
 public class AcConfigSetterStore {
 	
 	Logger log = LoggerFactory.getLogger(new Object(){}.getClass().getEnclosingClass());
